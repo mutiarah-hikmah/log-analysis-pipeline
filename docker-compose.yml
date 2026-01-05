@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. RabbitMQ (Message Broker)
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rmq_broker
+    ports:
+      - "5672:5672"   # Port untuk komunikasi aplikasi
+      - "15672:15672" # Port untuk Dashboard UI RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - data-network
+
+  # 2. MinIO (Data Lake - S3 Compatible)
+  minio:
+    image: minio/minio
+    container_name: minio_datalake
+    ports:
+      - "9000:9000"   # Port API
+      - "9001:9001"   # Port Console UI
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    networks:
+      - data-network
+
+  # 3. PostgreSQL (Data Warehouse)
+  postgres:
+    image: postgres:13
+    container_name: warehouse_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: log_warehouse
+    networks:
+      - data-network
+
+networks:
+  data-network:
+    driver: bridge
