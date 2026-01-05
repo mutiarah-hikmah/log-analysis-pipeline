@@ -1,13 +1,11 @@
-# Python cache
+
 __pycache__/
 *.pyc
 
-# Virtual Environment
 venv/
 env/
 
 *.csv
 *.log
 
-# System
 .DS_Store
